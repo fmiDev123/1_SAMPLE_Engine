@@ -1,0 +1,4 @@
+[16:30:37] START  Helium-3 Market  |  Global_Helium-3_Market_Formatted_Dataset_ind.xlsx  |  Fact.MR  |  level=both  regions=Global, Western Europe  countries=Germany
+[16:30:37] [1/1] 3) this view (locked) -> 3 - Helium-3 Market Report - Global, Western Europe, Germany (Fact.MR) (locked).pptx
+[16:34:09]    done  4.55 MB  212s
+[16:34:09] FINISHED  1/1 ok  |  Output\Helium3_Sample_FactMR

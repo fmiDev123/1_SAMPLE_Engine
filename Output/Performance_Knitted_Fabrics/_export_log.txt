@@ -1,0 +1,8 @@
+[15:39:39] START  Performance Knitted Fabrics Market  |  Global_Performance_Knitted_Fabrics_Market_Formatted_Dataset.xlsx  |  FMI  |  level=both  regions=Global, North America, Latin America, Western Europe, Eastern Europe, East Asia, South Asia Pacific, Middle East & Africa  countries=all
+[15:39:39] [1/1] 1) this view -> 1 - Performance Knitted Fabrics Market Report - Global, North America, Latin America, Western Europe, Eastern Europe, East Asia, South Asia Pacific, Middle East & Africa, KSA, Other GCC, Turkiye, South Africa, Other African Union (FMI).pptx
+[15:44:33]    FAILED after 295s
+[15:44:34] FINISHED  0/1 ok  |  FAILED: 1:1 - Performance Knitted Fabrics Market Report - Global, North America, Latin America, Western Europe, Eastern Europe, East Asia, South Asia Pacific, Middle East & Africa, KSA, Other GCC, Turkiye, South Africa, Other African Union (FMI).pptx  |  Output\Performance_Knitted_Fabrics
+[15:45:02] START  Performance Knitted Fabrics Market  |  Global_Performance_Knitted_Fabrics_Market_Formatted_Dataset.xlsx  |  FMI  |  level=both  regions=Global, North America, Latin America, Western Europe, Eastern Europe, East Asia, South Asia Pacific, Middle East & Africa  countries=all
+[15:45:02] [1/1] 1) this view -> 1 - Performance Knitted Fabrics Market Report - Global + 7 Regions + 31 Countries (FMI).pptx
+[15:56:23]    done  20.32 MB  681s
+[15:56:23] FINISHED  1/1 ok  |  Output\Performance_Knitted_Fabrics

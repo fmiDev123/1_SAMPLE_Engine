@@ -1,0 +1,12 @@
+[17:20:19] START  Pet Cosmetic Products Market  |  Europe_Pet_Cosmetic_Products_Market_Formatted_Dataset.xlsx  |  FMI  |  level=both  regions=Europe  countries=Germany
+[17:20:19] [1/1] 3) this view (locked) -> 3 - Pet Cosmetic Products Market Report - Europe - Germany (FMI) (locked).pptx
+[17:22:01]    done  5.37 MB  102s
+[17:22:01] FINISHED  1/1 ok  |  D:\PY\FMI_PPT\Output\Europe_Pet_Cosmetic
+[17:37:07] START  Pet Cosmetic Products Market  |  Europe_Pet_Cosmetic_Products_Market_Formatted_Dataset.xlsx  |  FMI  |  level=both  regions=Europe  countries=Germany
+[17:37:07] [1/1] 3) this view (locked) -> 3 - Pet Cosmetic Products Market Report - Europe - Germany (FMI) (locked).pptx
+[17:42:33]    FAILED after 326s
+[17:42:33] FINISHED  0/1 ok  |  FAILED: 3:3 - Pet Cosmetic Products Market Report - Europe - Germany (FMI) (locked).pptx  |  D:\PY\FMI_PPT\Output\Europe_Pet_Cosmetic
+[17:59:01] START  Pet Cosmetic Products Market  |  Europe_Pet_Cosmetic_Products_Market_Formatted_Dataset.xlsx  |  FMI  |  level=both  regions=Europe  countries=Germany
+[17:59:01] [1/1] 3) this view (locked) -> 3 - Pet Cosmetic Products Market Report - Europe - Germany (FMI) (locked).pptx
+[18:05:46]    FAILED after 405s
+[18:05:46] FINISHED  0/1 ok  |  FAILED: 3:3 - Pet Cosmetic Products Market Report - Europe - Germany (FMI) (locked).pptx  |  D:\PY\FMI_PPT\Output\Europe_Pet_Cosmetic

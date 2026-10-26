@@ -1,0 +1,4 @@
+﻿[19:38:41] START  Matcha Market  |  mat_ind.xlsx  |  FMI  |  level=both  regions=Global, North America  countries=U.S.
+[19:38:41] [1/1] 3) this view (locked) -> 3 - Matcha Market Report - Global, North America, U.S. (FMI) (locked).pptx
+[19:45:12]    done  6.56 MB  391s
+[19:45:12] FINISHED  1/1 ok  |  C:\Users\Shweta\OneDrive - Future Market Insights Pvt.Ltd\Documents\FMI_PPT\Output\Matcha_Sample

@@ -1,0 +1,4 @@
+[13:24:23] START  Crab Meat Market  |  crab_ind.xlsx  |  FMI  |  level=both  regions=Global, Europe  countries=Germany
+[13:24:23] [1/1] 3) this view (locked) -> 3 - Crab Meat Market Report - Global, Europe, Germany (FMI) (locked).pptx
+[13:26:57]    done  5.52 MB  155s
+[13:26:57] FINISHED  1/1 ok  |  C:\Users\Shweta\OneDrive - Future Market Insights Pvt.Ltd\Documents\FMI_PPT\Output\Crab_Meat_Sample

@@ -1,0 +1,4 @@
+[17:55:55] START  Hair Styling Products Market  |  Global_Hair_Styling_Products_Market_Formatted_Dataset.xlsx  |  FMI  |  level=both  regions=Global, North America, Latin America, Europe, East Asia, South Asia & Pacific, Middle East & Africa  countries=all
+[17:55:55] [1/1] 1) this view -> 1 - Hair Styling Products Market Report - Global + 6 Regions + 37 Countries (FMI).pptx
+[18:05:39]    done  18.06 MB  584s
+[18:05:39] FINISHED  1/1 ok  |  Output\Hair_Styling_Report

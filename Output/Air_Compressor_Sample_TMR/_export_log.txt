@@ -1,0 +1,4 @@
+[15:56:54] START  Industrial Air Compressor Market  |  Global_Industrial_Air_Compressor_Market_Formatted_Dataset_ind.xlsx  |  TMR  |  level=both  regions=Global, North America  countries=U.S.
+[15:56:54] [1/1] 3) this view (locked) -> 3 - Industrial Air Compressor Market Report - Global, North America, U.S. (TMR) (locked).pptx
+[16:02:00]    done  5.58 MB  306s
+[16:02:00] FINISHED  1/1 ok  |  Output\Air_Compressor_Sample_TMR

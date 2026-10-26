@@ -1,0 +1,272 @@
+--- a/fmi_report/locking.py
++++ b/fmi_report/locking.py
+@@ -126,9 +126,114 @@
+               page_exemptions=False, protect=protect, totals_only=True)
+     kw.update(indicative=bool(getattr(config, "INDICATIVE", False)))
+     kw.update(over)
++    head = getattr(config, "HEADLINE", None) or {}
++    if kw["indicative"] and head.get("value_2026") and head.get("cagr") \
++            and "protect" not in over:
++        return _headline_policy(pl, kw, head)
+     return pl.LockPolicy(**kw)
+ 
+ 
++def _fmt_value(v):
++    """A value as the deck prints it: whole numbers from 1,000, else 1 dp."""
++    return f"{v:,.0f}" if abs(v) >= 1000 else f"{v:,.1f}"
++
++
++def _headline_policy(pl, kw, head):
++    """Indicative deck, but the client GAVE the Global headline figures: those
++    - and what follows from them by the basic formulas - stay readable.
++
++    Open: the 2025 / 2026 / 2036 values, the absolute opportunity (2026->2036
++    and 2025->2036), the 2036/2026 multiple ("1.6X increase") and the forecast
++    CAGR, wherever they are written: a KPI card, a table's TOTAL row, a chart
++    bar labelled with the forecast span, a sentence.  The CAGR, which many
++    cells can round to, is read only where its own context says it is the
++    Global forecast CAGR (a 'Global ...' page / a sentence without a region or
++    country name).  Every region / country / segment figure, and the 2021-2025
++    CAGR, is withheld as usual."""
++    v25, v26, v36 = (head.get(k) for k in ("value_2025", "value_2026",
++                                           "value_2036"))
++    nums = {_fmt_value(v) for v in (v25, v26, v36) if v}
++    if v26 and v36:
++        nums.add(_fmt_value(v36 - v26))
++        if v25:
++            nums.add(_fmt_value(v36 - v25))
++    cagr = f"{head['cagr'] * 100:.1f}%"
++    mult = set()
++    for base in (v26, v25):          # 2026->2036 and the classic 2025->2036
++        if base and v36:
++            mult |= {f"{v36 / base:.1f}", f"{v36 / base:.2f}"}
++    span = {f"{config.EST_YEAR}-{config.END_YEAR}",
++            f"{config.EST_YEAR}–{config.END_YEAR}"}
++    geos = {str(g).lower() for g in data.REGIONS}
++    for cs in data.COUNTRIES.values():
++        geos |= {str(c).lower() for c in cs}
++    geos.discard("global")
++
++    def _geo_free(s):
++        low = s.lower()
++        return not any(g in low for g in geos)
++
++    class HeadlinePolicy(pl.LockPolicy):
++        global_slides = set()
++
++        def is_open_label(self, text):
++            if super().is_open_label(text):
++                return True
++            # a chart category / column named for the forecast span, on a
++            # 'Global ...' page: the given CAGR and the 2026->2036 increment
++            t = str(text or "").strip().replace(" ", "")
++            if t in span:
++                f = sys._getframe(1).f_locals
++                return f.get("slide_no") in self.global_slides
++            return False
++
++        def keeps_value(self, v):
++            """A chart point whose value IS a given / derived headline
++            figure (the 2026 and 2036 bars, the 2026->2036 increment)."""
++            try:
++                return _fmt_value(float(v)) in nums
++            except (TypeError, ValueError):
++                return False
++
++        def keeps_figure(self, s, a, b, whole):
++            m = re.search(r"\d[\d,]*(?:\.\d+)?", whole)
++            if not m:
++                return False
++            num = m.group(0)
++            if num in nums:
++                return True
++            if num in mult and _geo_free(s) and "market" in s.lower()                     and not re.search(r"volume|units?|MT|segment|higher|"
++                                      r"lower|compared", s, re.I) and (
++                    s[b:b + 1] in ("X", "x")
++                    or whole.rstrip().endswith(("X", "x"))):
++                return True
++            if whole.strip().endswith("%") and num + "%" == cagr:
++                # major places only: the Global market / forecast CAGR
++                # sentence - never a named category or a ranked statement
++                return (_geo_free(s) and re.search(
++                    r"global|forecast cagr", s, re.I) is not None
++                    and not re.search(r"['’]|segment|fastest|highest|"
++                                      r"lowest|leads?|largest|outpac",
++                                      s, re.I))
++            return False
++
++        def is_protected(self, text):
++            if super().is_protected(text):
++                return True
++            t = " ".join(str(text or "").split())
++            if t in nums:
++                return True
++            if t == cagr:
++                f = sys._getframe(1).f_locals
++                if "total_rows" in f:                      # a table cell
++                    return (f.get("slide_no") in self.global_slides
++                            and f.get("r") in f["total_rows"])
++                return f.get("n") in self.global_slides    # a KPI card
++            return False
++
++    return HeadlinePolicy(**kw)
++
++
+ @contextmanager
+ def _deep_rels(limit: int = 10_000):
+     """Room on the stack for a big deck's relationship graph.
+@@ -168,8 +273,16 @@
+     in_place = dst is None
+     out = Path(tempfile.mkdtemp()) / src.name if in_place else Path(dst)
+     out.parent.mkdir(parents=True, exist_ok=True)
++    policy = policy or default_policy()
++    if hasattr(policy, "global_slides"):      # headline figures given
++        from pptx import Presentation
++        prs = Presentation(str(src))
++        policy.global_slides = {
++            n for n, s in enumerate(prs.slides, 1)
++            if pl._slide_heading(s).strip().lower().startswith("global")}
++        del prs
+     with _deep_rels():
+-        pl.apply_locks(src, out, policy=policy or default_policy())
++        pl.apply_locks(src, out, policy=policy)
+     mask_chart_categories(out)
+     scrub_chart_data(out)
+     shield_charts(out)
+--- a/fmi_report/config.py
++++ b/fmi_report/config.py
+@@ -63,6 +63,25 @@
+ INDICATIVE = bool(os.environ.get("FMI_INDICATIVE")) or \
+     Path(str(DATA_FILE) + ".indicative").exists()
+ 
++
++def _read_headline():
++    """The Global headline figures a client GAVE (2025 / 2026 / 2036 value and
++    CAGR), written into the '.indicative' marker by fmi_indicative_numbers.py
++    as a 'headline: {json}' line.  A locked sample leaves exactly these
++    readable - see locking.default_policy.  {} when none were given."""
++    import json
++    try:
++        for line in Path(str(DATA_FILE) + ".indicative").read_text(
++                encoding="utf-8").splitlines():
++            if line.startswith("headline:"):
++                return json.loads(line.split(":", 1)[1])
++    except Exception:
++        pass
++    return {}
++
++
++HEADLINE = _read_headline()
++
+ # ── Report years ─────────────────────────────────────────────────────
+ # Defaults follow the FMI convention (5 historical + estimate + forecast
+ # horizon).  data.py calls set_years() with the years actually found in
+--- a/fmi_indicative_numbers.py
++++ b/fmi_indicative_numbers.py
+@@ -124,6 +124,11 @@
+     v25, v26, v36, g = value_2025, value_2026, value_2036, cagr
+     if g is not None and g > 1:          # 4.4 given as a percentage
+         g = g / 100.0
++    if v26 is not None and v36 is not None and v26 > 0:
++        # both end values given: the CAGR follows from them.  A CAGR quoted
++        # to one decimal (5.1%) would make the 2036 total drift off the
++        # given figure (89.1 x 1.051^10 = 146.5 only to +-0.02 Bn).
++        g = (v36 / v26) ** (1.0 / n) - 1
+     if v26 is None and v36 is not None and g is not None:
+         v26 = v36 / (1 + g) ** n
+     if v26 is None and v25 is not None and g is not None:
+@@ -288,11 +293,21 @@
+         if self.cagr is not None:
+             # pin the world to the headline path: every leaf is scaled by the
+             # same per-year factor, so regions and the top still add up
++            # Only 2025 onwards sit on the given path (2025 = 2026 / (1 + g)):
++            # the years before keep the model's own historical growth, scaled
++            # by the 2025 factor, so the 2021-2025 CAGR is NOT the forecast
++            # CAGR that was given.
++            pin_from = BASE_YEAR - 1
++            fixed = {}
+             for k, y in enumerate(yrs):
+-                tgt = self.global_value * (1 + self.cagr) ** (y - BASE_YEAR)
+-                tot = sum(self.T[(g, F.VALUE)][k] for g in self.leaf_geos
+-                          if (g, F.VALUE) in self.T)
+-                f = tgt / tot if tot else 1.0
++                yy = max(y, pin_from)
++                if yy not in fixed:
++                    kk = yrs.index(yy) if yy in yrs else k
++                    tgt = self.global_value * (1 + self.cagr) ** (yy - BASE_YEAR)
++                    tot = sum(self.T[(g, F.VALUE)][kk] for g in self.leaf_geos
++                              if (g, F.VALUE) in self.T)
++                    fixed[yy] = tgt / tot if tot else 1.0
++                f = fixed[yy]
+                 for g in self.leaf_geos:
+                     if (g, F.VALUE) in self.T:
+                         for m in (F.VALUE, F.VOLUME):
+@@ -468,6 +483,22 @@
+     return out_xlsx
+ 
+ 
++def write_marker(path, h=None):
++    """The '.indicative' marker.  When the Global headline figures were GIVEN
++    (h = headline_figures(...) with 2026 value and CAGR), they are recorded so
++    a locked sample can leave exactly those figures readable."""
++    import json
++    tail = " except the given Global headline figures." if h else "."
++    with open(str(path) + ".indicative", "w", encoding="utf-8") as fh:
++        fh.write("Figures in this dataset are generated examples, not "
++                 "research. Decks built from it withhold every figure"
++                 + tail + "\n")
++        if h:
++            fh.write("headline: " + json.dumps(
++                {k: h.get(k) for k in ("value_2025", "value_2026",
++                                       "value_2036", "cagr")}) + "\n")
++
++
+ def build_from_segmentation(seg_path, out_dir=None, market=None, price=None):
+     """Segmentation brief -> indicative dataset (+ marker + companies sheet).
+ 
+@@ -491,9 +522,7 @@
+     stem = re.sub(r"[^A-Za-z0-9]+", "_", f"Global {ds.market} Market").strip("_")
+     out = out_dir / f"{stem}_Formatted_Dataset_ind.xlsx"
+     F.write_formatted_dataset(ds, out)
+-    with open(str(out) + ".indicative", "w", encoding="utf-8") as fh:
+-        fh.write("Figures in this dataset are generated examples, not "
+-                 "research. Decks built from it withhold every figure.\n")
++    write_marker(out, h if pinned else None)
+     if ds.companies:
+         write_companies(ds.companies,
+                         out_dir / f"{stem}_Companies.xlsx")
+@@ -553,9 +582,7 @@
+     issues = F.run_qc(ds)
+     F.write_formatted_dataset(ds, a.out)
+     # a marker beside the workbook: decks built from it lock EVERY figure
+-    with open(str(a.out) + ".indicative", "w", encoding="utf-8") as fh:
+-        fh.write("Figures in this dataset are generated examples, not "
+-                 "research. Decks built from it withhold every figure.\n")
++    write_marker(a.out, h if pinned else None)
+     errs = [i for i in issues if "ERROR" in str(i)]
+     print(f"Wrote {a.out}  |  QC: {len(errs)} error(s), "
+           f"{len(issues) - len(errs)} other message(s)")
+--- a/pptlock.py
++++ b/pptlock.py
+@@ -1506,6 +1506,9 @@
+             if v is None:
+                 continue
+             cat = cats[pi] if pi < len(cats) else ""
++            kv = getattr(policy, "keeps_value", None)
++            if kv is not None and kv(v):
++                continue                    # a figure the client gave
+             keep = (rule or {}).get("open_cats")
+             if keep is not None:
+                 # this page names the categories that stay readable; the year
+@@ -1625,8 +1628,11 @@
+     """``prose_figures`` in the shape this module applies: with the unit the
+     padlock keeps."""
+     out = []
++    keeps = getattr(policy, "keeps_figure", None)   # a figure the client gave
+     for a, b, whole, _num, unit in prose_figures(s, policy.protect,
+                                                  policy.min_bare_int):
++        if keeps is not None and keeps(s, a, b, whole):
++            continue
+         if not KEEP_PCT_UNIT and unit.startswith("%"):
+             unit = unit[1:].strip()
+         out.append((a, b, whole, unit))

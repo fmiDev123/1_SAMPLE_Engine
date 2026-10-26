@@ -1,0 +1,4 @@
+[16:19:19] START  Performance Knitted Fabrics Market  |  Global_Performance_Knitted_Fabrics_Market_Formatted_Dataset.xlsx  |  Fact.MR  |  level=both  regions=Global, North America, Latin America, Western Europe, Eastern Europe, East Asia, South Asia Pacific, Middle East & Africa  countries=all
+[16:19:19] [1/1] 1) this view -> 1 - Performance Knitted Fabrics Market Report - Global + 7 Regions + 31 Countries (Fact.MR).pptx
+[16:36:53]    done  20.50 MB  1054s
+[16:36:53] FINISHED  1/1 ok  |  Output\Performance_Knitted_Fabrics_FactMR_full

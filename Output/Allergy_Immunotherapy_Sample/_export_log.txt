@@ -1,0 +1,12 @@
+[13:45:42] START  Allergy Immunotherapy Market  |  Global_Allergy_Immunotherapy_Market_Formatted_Dataset.xlsx  |  FMI  |  level=both  regions=Global, North America  countries=U.S.
+[13:45:42] [1/1] 3) this view (locked) -> 3 - Allergy Immunotherapy Market Report - Global, North America, U.S. (FMI) (locked).pptx
+[13:46:39]    FAILED after 57s
+[13:46:39] FINISHED  0/1 ok  |  FAILED: 3:3 - Allergy Immunotherapy Market Report - Global, North America, U.S. (FMI) (locked).pptx  |  D:\PY\FMI_PPT\Output\Allergy_Immunotherapy_Sample
+[13:46:58] START  Allergy Immunotherapy Market  |  Global_Allergy_Immunotherapy_Market_Formatted_Dataset.xlsx  |  FMI  |  level=both  regions=Global, North America  countries=U.S.
+[13:46:58] [1/1] 3) this view (locked) -> 3 - Allergy Immunotherapy Market Report - Global, North America, U.S. (FMI) (locked).pptx
+[13:50:44]    done  4.29 MB  226s
+[13:50:44] FINISHED  1/1 ok  |  D:\PY\FMI_PPT\Output\Allergy_Immunotherapy_Sample
+[15:22:44] START  Allergy Immunotherapy Market  |  Global_Allergy_Immunotherapy_Market_Formatted_Dataset.xlsx  |  FMI  |  level=both  regions=Global, North America  countries=U.S.
+[15:22:44] [1/1] 3) this view (locked) -> 3 - Allergy Immunotherapy Market Report - Global, North America, U.S. (FMI) (locked).pptx
+[15:28:54]    done  4.68 MB  369s
+[15:28:54] FINISHED  1/1 ok  |  D:\PY\FMI_PPT\Output\Allergy_Immunotherapy_Sample

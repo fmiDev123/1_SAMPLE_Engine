@@ -1,0 +1,25 @@
+/* Focus mode: enlarge one visual panel into a centered overlay */
+.vp-focused {
+    position: fixed !important;
+    top: 4vh !important; left: 5vw !important;
+    width: 90vw !important; height: 90vh !important;
+    z-index: 400 !important;
+    box-shadow: 0 12px 48px rgba(0, 40, 80, 0.38) !important;
+    border: 1px solid #007BA5 !important;
+}
+.vp-focused .vh-icons { display: none !important; }
+#viz-backdrop {
+    position: fixed; inset: 0;
+    background: rgba(18, 38, 58, 0.45); z-index: 390;
+}
+.vp-close {
+    position: absolute; top: 6px; right: 8px; z-index: 401;
+    width: 24px; height: 24px; display: flex; align-items: center;
+    justify-content: center; cursor: pointer; border-radius: 5px;
+    color: #605E5C; font-size: 15px; background: #F1F1F1;
+}
+.vp-close:hover { background: #E3F4FB; color: #007BA5; }
+
+/* make the header icon clearly clickable on hover */
+.viz-panel:hover .vh-icons { opacity: 0.8 !important; }
+.vh-icon { padding: 0 3px; }
